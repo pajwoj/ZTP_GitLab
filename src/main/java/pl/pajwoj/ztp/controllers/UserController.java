@@ -66,16 +66,64 @@ public class UserController {
         return userService.delete(email);
     }
 
+    @Operation(summary = "Authenticate an user (login)")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "User is already logged in or user not found.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User provided wrong password.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User authenticated successfully.",
+                    content = @Content
+            )
+    })
     @PostMapping(path = "/login")
-    public ResponseEntity<?> login(@RequestParam @AuthenticationPrincipal String email, @RequestParam String password, HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity<?> login(@RequestParam @AuthenticationPrincipal @Parameter(description = "E-mail of the user to be logged in") String email, @RequestParam @Parameter(description = "Password of the user to be logged in") String password, HttpServletRequest req, HttpServletResponse res) {
         return userService.login(email, password, req, res);
     }
-    
+
+    @Operation(summary = "Log out (destroy session for an user, unauthenticate)")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "User is not logged in.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User logged out successfully.",
+                    content = @Content
+            )
+    })
     @PostMapping(path = "/logout")
     public ResponseEntity<?> logoutPOST(HttpServletRequest req, HttpServletResponse res) {
         return userService.logout(req, res);
     }
 
+    @Operation(summary = "Log out (destroy session for an user, unauthenticate)")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "User is not logged in.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User logged out successfully.",
+                    content = @Content
+            )
+    })
     @GetMapping(path = "/logout")
     public ResponseEntity<?> logoutGET(HttpServletRequest req, HttpServletResponse res) {
         return userService.logout(req, res);
