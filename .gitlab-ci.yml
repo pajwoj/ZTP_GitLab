@@ -1,3 +1,5 @@
+image: maven:latest-alpine
+
 stages:
   - build
   - test
