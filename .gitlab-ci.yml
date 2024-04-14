@@ -15,6 +15,7 @@ cache:
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
+  - chmod +x ./mvnw
 
 build:
   stage: build
