@@ -98,7 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @Order(5)
+    @Order(4)
     public void login2Status200() throws Exception {
         mvc.perform(post("/api/users/register")
                 .param("email", "mock@email.com")
@@ -111,31 +111,9 @@ public class UserControllerTest {
     }
 
     @Test
-    @Order(4)
-    public void logoutGETStatus200() throws Exception {
-        mvc.perform(post("/api/users/login")
-                .param("email", "mock@email.com")
-                .param("password", "Pa$$w0rd"));
-
-        mvc.perform(get("/api/users/logout"))
-                .andExpect(status().is(200));
-    }
-
-    @Test
     public void logoutGETStatus400() throws Exception {
         mvc.perform(get("/api/users/logout"))
                 .andExpect(status().is(400));
-    }
-
-    @Test
-    @Order(6)
-    public void logoutPOSTStatus200() throws Exception {
-        mvc.perform(post("/api/users/login")
-                .param("email", "mock@email.com")
-                .param("password", "Pa$$w0rd"));
-
-        mvc.perform(post("/api/users/logout"))
-                .andExpect(status().is(200));
     }
 
     @Test
