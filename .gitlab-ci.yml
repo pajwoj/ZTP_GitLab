@@ -10,6 +10,9 @@ before_script:
 code_quality:
   stage: code_quality
   image: maven:latest
+  cache:
+    paths:
+      - target/
   script:
     - mvn site
 
