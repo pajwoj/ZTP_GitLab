@@ -3,6 +3,11 @@ stages:
   - build
   - test
 
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
@@ -10,9 +15,13 @@ before_script:
 code_quality:
   stage: code_quality
   image: maven:latest
-  cache:
+  artifacts:
+    untracked: false
+    when: on_success
+    access: developer
+    expire_in: 7 days
     paths:
-      - target/
+      - target/site/checkstyle.html
   script:
     - mvn site
 
@@ -27,7 +36,3 @@ test:
   image: maven:latest
   script:
     - mvn test
-
-
-
-
