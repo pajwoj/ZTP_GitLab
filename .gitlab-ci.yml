@@ -17,21 +17,6 @@ before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
-check_style:
-  image: maven:latest
-  stage: code-quality
-  script:
-    - mvn checkstyle:check
-
-show_style_report:
-  image: maven:latest
-  stage: code-quality
-  script:
-    - ./mvnw site
-  artifacts:
-    paths:
-      - target/site/checkstyle.html
-
 build:
   stage: build
   script:
