@@ -1,16 +1,17 @@
 stages:
+  - code_quality
   - build
   - test
-  - run
-
-cache:
-  paths:
-    - .m2/repository/
-    - target/
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
+
+code_quality:
+  stage: code_quality
+  image: maven:latest
+  script:
+    - mvn site
 
 build:
   stage: build
@@ -23,13 +24,6 @@ test:
   image: maven:latest
   script:
     - mvn test
-
-run:
-  stage: run
-  image: maven:latest
-  script:
-    - mvn package
-    - mvn exec:java -Dexec.mainClass="pl.pajwoj.ztp.ZtpApplication"
 
 
 
