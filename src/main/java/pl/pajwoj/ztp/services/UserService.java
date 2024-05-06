@@ -99,4 +99,13 @@ public class UserService {
 
         return new ResponseEntity<>("Successfully logged out!", HttpStatus.OK);
     }
+
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest req) {
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        if(context.getAuthentication() instanceof AnonymousAuthenticationToken)
+            return new ResponseEntity<>("Not logged in!", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(context.getAuthentication().getPrincipal().toString(), HttpStatus.OK);
+    }
 }

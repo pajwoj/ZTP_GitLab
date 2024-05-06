@@ -21,6 +21,7 @@ import pl.pajwoj.ztp.services.UserService;
 
 @RestController
 @RequestMapping(path = "api/users")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
 
     private final UserService userService;
@@ -127,5 +128,10 @@ public class UserController {
     @GetMapping(path = "/logout")
     public ResponseEntity<?> logoutGET(HttpServletRequest req, HttpServletResponse res) {
         return userService.logout(req, res);
+    }
+
+    @GetMapping(path = "/current")
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest req) {
+        return userService.getCurrentUser(req);
     }
 }

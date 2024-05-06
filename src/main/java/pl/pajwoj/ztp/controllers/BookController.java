@@ -12,6 +12,7 @@ import pl.pajwoj.ztp.services.BookService;
 
 @RestController
 @RequestMapping(path = "api/books")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class BookController {
 
     private final BookService bookService;
