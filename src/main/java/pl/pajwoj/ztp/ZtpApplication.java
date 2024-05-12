@@ -16,6 +16,12 @@ public class ZtpApplication {
 
 		s.register("EMAIL@WP.PL", "PASS");
 		b.add("9780156030434", "The Mysterious Flame Of Queen Loana", "Umberto Eco");
+		b.add("1", "The Mysterious Flame Of Queen Loana", "Umberto Eco");
+		b.add("2", "b2", "Umberto Eco");
+		b.add("3", "b3", "Umberto Eco");
+		b.add("4", "b4", "Umberto Eco");
+		b.add("5", "b5", "Umberto Eco");
+		b.add("6", "b6", "Umberto Eco");
 	}
 
 }

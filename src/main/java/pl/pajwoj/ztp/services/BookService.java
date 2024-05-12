@@ -57,4 +57,8 @@ public class BookService {
             }
         }
     }
+
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(bookRepository.findAll(), HttpStatus.OK);
+    }
 }

@@ -56,7 +56,7 @@ public class BookController {
     })
     @Transactional
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<?> register(@Parameter(description = "ISBN of the book to be removed") @RequestParam String isbn) {
+    public ResponseEntity<?> delete(@Parameter(description = "ISBN of the book to be removed") @RequestParam String isbn) {
         return bookService.delete(isbn);
     }
 
@@ -77,5 +77,10 @@ public class BookController {
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> get(@Parameter(description = "ID of the book to be retrieved") @PathVariable Long id) {
         return bookService.get(id);
+    }
+
+    @GetMapping(path = "/all", produces = "application/json")
+    public ResponseEntity<?> getAll() {
+        return bookService.getAll();
     }
 }
