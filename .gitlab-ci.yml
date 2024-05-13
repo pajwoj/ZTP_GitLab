@@ -2,6 +2,7 @@ stages:
   - codeQuality
   - build
   - test
+  - repository
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
@@ -90,3 +91,18 @@ frontendTest:
     - frontendBuild
     - backendCodeQuality
     - backendBuild
+
+pushToRepository:
+  stage: repository
+  image: alpine:latest
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+
+  services: docker:26.1.2-dind
+
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker build -t pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA .
+    - docker push pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA
