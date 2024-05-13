@@ -76,10 +76,10 @@ frontendTest:
     - apt-get update
     - apt-get install -y nodejs npm
   script:
-    - mvn spring-boot:run &
+    - mvn spring-boot:run > /dev/null 2>&1 &
     - cd frontend
     - npm install
-    - npm start &
+    - npm start > /dev/null 2>&1 &
     - wait
     - npx cypress run
 
