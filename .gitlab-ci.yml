@@ -1,19 +1,22 @@
 stages:
-  - code_quality
-  - build
-  - test
+  - backendCodeQuality
+  - frontendCodeQuality
+  - backendBuild
+  - backendTest
+  - frontendTest
 
 cache:
   paths:
     - .m2/repository/
     - target/
+    - node_modules/
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
-code_quality:
-  stage: code_quality
+backendCodeQuality:
+  stage: backendCodeQuality
   image: maven:latest
   artifacts:
     untracked: false
@@ -25,14 +28,35 @@ code_quality:
   script:
     - mvn site
 
-build:
-  stage: build
+frontendCodeQuality:
+  stage: frontendCodeQuality
+  image: node:latest
+  script:
+    - npm install eslint
+    - eslint --config frontend/eslint.config.mjs .
+
+backendBuild:
+  stage: backendBuild
   image: maven:latest
   script:
     - mvn compile
 
-test:
-  stage: test
+backendTest:
+  stage: backendTest
   image: maven:latest
   script:
     - mvn test
+
+frontendTest:
+  stage: backendTest
+  image: maven:latest
+  before_script:
+    - apt-get update
+    - apt-get install -y nodejs npm
+  script:
+    - mvn spring-boot:run
+    - cd frontend
+    - npm install
+    - npm start
+    - npx cypress run
+    
