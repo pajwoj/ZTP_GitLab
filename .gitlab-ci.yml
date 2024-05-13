@@ -33,7 +33,7 @@ frontendCodeQuality:
   image: node:latest
   script:
     - npm install eslint
-    - eslint --config frontend/eslint.config.mjs .
+    - npx eslint --config frontend/eslint.config.mjs .
 
 backendBuild:
   stage: backendBuild
