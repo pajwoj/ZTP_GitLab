@@ -82,6 +82,7 @@ frontendTest:
     - npm start > /dev/null 2>&1 &
     - sleep 30 #just to be sure I guess
     - npm install cypress --save-dev
+    - npx cypress install
     - npx cypress run
 
   dependencies:
