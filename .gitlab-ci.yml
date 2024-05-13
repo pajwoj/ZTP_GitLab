@@ -1,9 +1,8 @@
 stages:
-  - backendCodeQuality
-  - frontendCodeQuality
-  - backendBuild
-  - backendTest
-  - frontendTest
+  - cacheCheck
+  - codeQuality
+  - build
+  - test
 
 cache:
   paths:
@@ -15,8 +14,17 @@ before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
+check_cache:
+  stage: cacheCheck
+  image: alpine:latest
+  script:
+    - ls -al .m2/repository/
+    - ls -al target/
+    - ls -al node_modules/
+
+
 backendCodeQuality:
-  stage: backendCodeQuality
+  stage: codeQuality
   image: maven:latest
   artifacts:
     untracked: false
@@ -29,7 +37,7 @@ backendCodeQuality:
     - mvn site
 
 frontendCodeQuality:
-  stage: frontendCodeQuality
+  stage: codeQuality
   image: node:latest
   script:
     - npm install eslint
@@ -37,19 +45,27 @@ frontendCodeQuality:
     - npx eslint --config frontend/eslint.config.mjs .
 
 backendBuild:
-  stage: backendBuild
+  stage: build
   image: maven:latest
   script:
     - mvn compile
 
+frontendBuild:
+  stage: build
+  image: node:latest
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+
 backendTest:
-  stage: backendTest
+  stage: test
   image: maven:latest
   script:
     - mvn test
 
 frontendTest:
-  stage: frontendTest
+  stage: test
   image: maven:latest
   before_script:
     - apt-get update
