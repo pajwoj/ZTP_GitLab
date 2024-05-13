@@ -96,11 +96,8 @@ pushToRepository:
   stage: repository
   image: alpine:latest
 
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_DRIVER: overlay2
-
-  services: docker:26.1.2-dind
+  services: 
+    - docker:dind
 
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
