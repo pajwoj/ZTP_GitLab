@@ -94,7 +94,7 @@ frontendTest:
 
 pushToRepository:
   stage: repository
-  image: alpine:latest
+  image: docker:latest
 
   services: 
     - docker:dind
