@@ -70,11 +70,11 @@ backendTest:
 
 frontendTest:
   stage: test
-  image: maven:latest
+  image: node:latest
 
   before_script:
     - apt-get update
-    - apt-get install -y nodejs npm
+    - apt-get install -y openjdk-17-jdk maven
   script:
     - mvn spring-boot:run > /dev/null 2>&1 &
     - cd frontend
