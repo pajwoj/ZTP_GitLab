@@ -8,15 +8,20 @@ before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
+cache:
+  key: cache-$CI_COMMIT_REF_SLUG
+  paths:
+    - .m2/repository/
+    - frontend/node_modules/
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
 backendCodeQuality:
   stage: codeQuality
   image: maven:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - ~/.m2/repository/
-      - target/
+  script:
+    - mvn site
 
   artifacts:
     untracked: false
@@ -25,18 +30,10 @@ backendCodeQuality:
     expire_in: 7 days
     paths:
       - target/site/checkstyle.html
-  script:
-    - mvn site
 
 frontendCodeQuality:
   stage: codeQuality
   image: node:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - frontend/node_modules/
-
   script:
     - cd frontend
     - npm install eslint eslint-plugin-react --save-dev
@@ -45,58 +42,40 @@ frontendCodeQuality:
 backendBuild:
   stage: build
   image: maven:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - ~/.m2/repository/
-      - target/
-
   script:
     - mvn compile
+
+  dependencies:
+    - backendCodeQuality
 
 frontendBuild:
   stage: build
   image: node:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - frontend/node_modules/
-
   script:
     - cd frontend
     - npm install
     - npm run build
 
+  dependencies:
+    - frontendCodeQuality
+
 backendTest:
   stage: test
   image: maven:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - ~/.m2/repository/
-      - target/
-
   script:
     - mvn test
+
+  dependencies:
+    - backendCodeQuality
+    - backendBuild
 
 frontendTest:
   stage: test
   image: maven:latest
 
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - frontend/node_modules/
-      - ~/.m2/repository/
-      - target/
-
   before_script:
     - apt-get update
     - apt-get install -y nodejs npm
-
   script:
     - mvn spring-boot:run
     - cd frontend
@@ -104,17 +83,15 @@ frontendTest:
     - npm start
     - npx cypress run
 
+  dependencies:
+    - frontendCodeQuality
+    - frontendBuild
+    - backendCodeQuality
+    - backendBuild
+
 check_cache:
   stage: cacheCheck
   image: alpine:latest
-
-  cache:
-    key: cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - frontend/node_modules/
-      - ~/.m2/repository/
-      - target/
-
   script:
     - ls -al ~/.m2/repository/
     - ls -al target/
