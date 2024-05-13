@@ -38,8 +38,9 @@ frontendCodeQuality:
       - frontend/node_modules/
 
   script:
+    - cd frontend
     - npm install eslint eslint-plugin-react --save-dev
-    - npx eslint --config frontend/eslint.config.mjs .
+    - npx eslint --config eslint.config.mjs .
 
 backendBuild:
   stage: build
