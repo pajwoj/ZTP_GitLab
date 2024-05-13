@@ -14,6 +14,7 @@ export default [
         },
         rules: {
             "react/prop-types": "off",
+            "react/display-name": "off",
             "semi": 2
         }
     },
