@@ -1,31 +1,23 @@
 stages:
-  - cacheCheck
   - codeQuality
   - build
   - test
-
-cache:
-  paths:
-    - .m2/repository/
-    - target/
-    - node_modules/
+  - cacheCheck
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
-check_cache:
-  stage: cacheCheck
-  image: alpine:latest
-  script:
-    - ls -al .m2/repository/
-    - ls -al target/
-    - ls -al node_modules/
-
-
 backendCodeQuality:
   stage: codeQuality
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   artifacts:
     untracked: false
     when: on_success
@@ -39,6 +31,12 @@ backendCodeQuality:
 frontendCodeQuality:
   stage: codeQuality
   image: node:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+
   script:
     - npm install eslint
     - npm install eslint-plugin-react
@@ -47,12 +45,25 @@ frontendCodeQuality:
 backendBuild:
   stage: build
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   script:
     - mvn compile
 
 frontendBuild:
   stage: build
   image: node:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+
   script:
     - cd frontend
     - npm install
@@ -61,19 +72,51 @@ frontendBuild:
 backendTest:
   stage: test
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   script:
     - mvn test
 
 frontendTest:
   stage: test
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+      - node_modules/
+
   before_script:
     - apt-get update
     - apt-get install -y nodejs npm
+
   script:
     - mvn spring-boot:run
     - cd frontend
     - npm install
     - npm start
     - npx cypress run
+
+check_cache:
+  stage: cacheCheck
+  image: alpine:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+      - node_modules/
+
+  script:
+    - ls -al ~/.m2/repository/
+    - ls -al target/
+    - ls -al node_modules/
     
