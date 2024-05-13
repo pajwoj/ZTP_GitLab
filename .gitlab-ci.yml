@@ -33,6 +33,7 @@ frontendCodeQuality:
   image: node:latest
   script:
     - npm install eslint
+    - npm install eslint-plugin-react
     - npx eslint --config frontend/eslint.config.mjs .
 
 backendBuild:
@@ -48,7 +49,7 @@ backendTest:
     - mvn test
 
 frontendTest:
-  stage: backendTest
+  stage: frontendTest
   image: maven:latest
   before_script:
     - apt-get update
