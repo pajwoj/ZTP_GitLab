@@ -2,7 +2,6 @@ stages:
   - codeQuality
   - build
   - test
-  - cacheCheck
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
@@ -77,7 +76,7 @@ frontendTest:
     - apt-get update
     - apt-get install -y nodejs npm
   script:
-    - mvn spring-boot:run
+    - mvn spring-boot:run &
     - cd frontend
     - npm install
     - npm start
@@ -88,12 +87,3 @@ frontendTest:
     - frontendBuild
     - backendCodeQuality
     - backendBuild
-
-check_cache:
-  stage: cacheCheck
-  image: alpine:latest
-  script:
-    - ls -al ~/.m2/repository/
-    - ls -al target/
-    - ls -al frontend/node_modules/
-    
