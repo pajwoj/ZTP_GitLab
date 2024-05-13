@@ -8,24 +8,15 @@ before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
-cacheDeps:
-  key: cache-$CI_COMMIT_REF_SLUG
-  paths:
-    - frontend/node_modules/
-    - ~/.m2/repository/
-
-cacheTarget:
-  key: cache-$CI_COMMIT_SHA
-  paths:
-    - target/
-
 backendCodeQuality:
   stage: codeQuality
   image: maven:latest
 
-  dependencies:
-    - cacheDeps
-    - cacheTarget
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
 
   artifacts:
     untracked: false
@@ -41,8 +32,10 @@ frontendCodeQuality:
   stage: codeQuality
   image: node:latest
 
-  dependencies:
-    - cacheDeps
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
 
   script:
     - npm install eslint eslint-plugin-react --save-dev
@@ -52,9 +45,11 @@ backendBuild:
   stage: build
   image: maven:latest
 
-  dependencies:
-    - cacheDeps
-    - cacheTarget
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
 
   script:
     - mvn compile
@@ -63,8 +58,10 @@ frontendBuild:
   stage: build
   image: node:latest
 
-  dependencies:
-    - cacheDeps
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
 
   script:
     - cd frontend
@@ -75,9 +72,11 @@ backendTest:
   stage: test
   image: maven:latest
 
-  dependencies:
-    - cacheDeps
-    - cacheTarget
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
 
   script:
     - mvn test
@@ -86,9 +85,12 @@ frontendTest:
   stage: test
   image: maven:latest
 
-  dependencies:
-    - cacheDeps
-    - cacheTarget
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+      - ~/.m2/repository/
+      - target/
 
   before_script:
     - apt-get update
@@ -105,9 +107,12 @@ check_cache:
   stage: cacheCheck
   image: alpine:latest
 
-  dependencies:
-    - cacheDeps
-    - cacheTarget
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+      - ~/.m2/repository/
+      - target/
 
   script:
     - ls -al ~/.m2/repository/
