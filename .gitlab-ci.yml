@@ -1,20 +1,23 @@
 stages:
-  - code_quality
+  - codeQuality
   - build
   - test
-
-cache:
-  paths:
-    - .m2/repository/
-    - target/
+  - cacheCheck
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
   - echo "Running on branch $CI_COMMIT_BRANCH"
 
-code_quality:
-  stage: code_quality
+backendCodeQuality:
+  stage: codeQuality
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   artifacts:
     untracked: false
     when: on_success
@@ -25,14 +28,95 @@ code_quality:
   script:
     - mvn site
 
-build:
+frontendCodeQuality:
+  stage: codeQuality
+  image: node:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+
+  script:
+    - cd frontend
+    - npm install eslint eslint-plugin-react --save-dev
+    - npx eslint --config eslint.config.mjs .
+
+backendBuild:
   stage: build
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   script:
     - mvn compile
 
-test:
+frontendBuild:
+  stage: build
+  image: node:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+
+backendTest:
   stage: test
   image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - ~/.m2/repository/
+      - target/
+
   script:
     - mvn test
+
+frontendTest:
+  stage: test
+  image: maven:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+      - ~/.m2/repository/
+      - target/
+
+  before_script:
+    - apt-get update
+    - apt-get install -y nodejs npm
+
+  script:
+    - mvn spring-boot:run
+    - cd frontend
+    - npm install
+    - npm start
+    - npx cypress run
+
+check_cache:
+  stage: cacheCheck
+  image: alpine:latest
+
+  cache:
+    key: cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - frontend/node_modules/
+      - ~/.m2/repository/
+      - target/
+
+  script:
+    - ls -al ~/.m2/repository/
+    - ls -al target/
+    - ls -al frontend/node_modules/
+    
