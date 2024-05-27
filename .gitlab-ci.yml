@@ -3,6 +3,7 @@ stages:
   - build
   - test
   - repository
+  - deploy
 
 before_script:
   - echo "Pipeline started by $GITLAB_USER_LOGIN"
@@ -103,3 +104,23 @@ pushToRepository:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA .
     - docker push pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+
+  before_script:
+    - apt update -y
+    - apt upgrade -y
+    - apt install openssh -y
+
+  script:
+    - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
+    - chmod 600 /tmp/ssh_key.pem
+    - ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key.pem $AZURE_VM_USER@$AZURE_VM_IP "
+      docker login -u '$CI_REGISTRY_USER' -p '$CI_REGISTRY_PASSWORD' &&
+      docker pull pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA &&
+      docker run -d -p 3000:3000 pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA"
+
+  dependencies:
+    - pushToRepository
