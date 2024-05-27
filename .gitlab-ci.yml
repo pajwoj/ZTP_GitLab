@@ -101,6 +101,7 @@ pushToRepository:
     - docker:dind
 
   script:
+    - unset DOCKER_HOST
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA .
     - docker push pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA
@@ -116,6 +117,7 @@ deploy:
   script:
     - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
     - chmod 600 /tmp/ssh_key.pem
+    - unset DOCKER_HOST
     - ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key.pem $AZURE_VM_USER@$AZURE_VM_IP "
       docker login -u '$CI_REGISTRY_USER' -p '$CI_REGISTRY_PASSWORD' &&
       docker pull pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA &&
