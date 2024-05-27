@@ -17,6 +17,13 @@ cache:
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - name: docker:dind
+    alias: docker
+    command: ["--host=tcp://0.0.0.0:2375", "--tls=false"]
 
 backendCodeQuality:
   stage: codeQuality
@@ -97,14 +104,16 @@ pushToRepository:
   stage: repository
   image: docker:latest
 
-  services: 
-    - name:  docker:dind
-      command: ["--tls=false"]
+  services:
+    - docker:dind
 
   script:
+    - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA .
     - docker push pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA
+  tags:
+    - docker
 
 deploy:
   stage: deploy
