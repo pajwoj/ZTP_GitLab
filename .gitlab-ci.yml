@@ -113,6 +113,7 @@ deploy:
   before_script:
     - apk update
     - apk add openssh
+    - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
     - chmod 400 /tmp/ssh_key.pem
     - ssh-add /tmp/ssh_key.pem
