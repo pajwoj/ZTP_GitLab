@@ -112,8 +112,6 @@ pushToRepository:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA .
     - docker push pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA
-  tags:
-    - docker
 
 deploy:
   stage: deploy
