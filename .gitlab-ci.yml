@@ -110,9 +110,8 @@ deploy:
   image: alpine:latest
 
   before_script:
-    - apt update -y
-    - apt upgrade -y
-    - apt install openssh -y
+    - apk update
+    - apk add openssh
 
   script:
     - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
