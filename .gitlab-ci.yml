@@ -113,10 +113,14 @@ deploy:
   before_script:
     - apk update
     - apk add openssh
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
+    - chmod 400 /tmp/ssh_key.pem
+    - ssh-add /tmp/ssh_key.pem
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
 
   script:
-    - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_key.pem
-    - chmod 600 /tmp/ssh_key.pem
     - ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key.pem $AZURE_VM_USER@$AZURE_VM_IP "
       docker login -u '$CI_REGISTRY_USER' -p '$CI_REGISTRY_PASSWORD' &&
       docker pull pajwoj/ztp-libraryapp:$CI_COMMIT_SHORT_SHA &&
