@@ -21,4 +21,5 @@ Pull the "pajwoj/ztp-libraryapp" container, then run it
 - Fully responsive and works well on mobile devices
 
 # Screenshots
-tbd
+![menu](https://archiwum4.s-ul.eu/Eut8UHCB)
+![book page](https://archiwum4.s-ul.eu/iyCjZCk3)
