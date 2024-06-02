@@ -21,6 +21,12 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
+    /**
+     * @param isbn ISBN of the book to be added
+     * @param name Name of the book to be added
+     * @param author Author of the book to be added
+     * @return Server response
+     */
     public ResponseEntity<?> add(String isbn, String name, String author) {
         if(isbn.isBlank() || name.isBlank() || author.isBlank()) return new ResponseEntity<>("Details can't be empty!", HttpStatus.BAD_REQUEST);
         if(bookRepository.findByIsbn(isbn).isPresent()) return new ResponseEntity<>("Book already exists!", HttpStatus.BAD_REQUEST);
@@ -34,6 +40,10 @@ public class BookService {
         return new ResponseEntity<>(name + " successfully added to database!", HttpStatus.OK);
     }
 
+    /**
+     * @param isbn ISBN of the book to be deleted
+     * @return Server response
+     */
     public ResponseEntity<?> delete(String isbn) {
         if(isbn.isBlank()) return new ResponseEntity<>("Details can't be empty!", HttpStatus.BAD_REQUEST);
         if(bookRepository.findByIsbn(isbn).isEmpty()) return new ResponseEntity<>("Book not found in database!", HttpStatus.BAD_REQUEST);
@@ -42,6 +52,10 @@ public class BookService {
         return new ResponseEntity<>("Book succesfully deleted!", HttpStatus.OK);
     }
 
+    /**
+     * @param id ID of the book to be retrieved
+     * @return Server response, if OK contains data about the book in JSON form
+     */
     public ResponseEntity<?> get(Long id) {
         if(!bookRepository.existsById(id) || bookRepository.findById(id).isEmpty()) return new ResponseEntity<>("Book not found in database!", HttpStatus.BAD_REQUEST);
 
@@ -58,6 +72,9 @@ public class BookService {
         }
     }
 
+    /**
+     * @return Server response, containing all books in JSON form
+     */
     public ResponseEntity<?> getAll() {
         return new ResponseEntity<>(bookRepository.findAll(), HttpStatus.OK);
     }

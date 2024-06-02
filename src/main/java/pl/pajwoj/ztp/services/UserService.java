@@ -44,6 +44,11 @@ public class UserService {
         this.logoutHandler = logoutHandler;
     }
 
+    /**
+     * @param email E-mail of the user to be registered
+     * @param password Password of the user to be registered
+     * @return Server response
+     */
     public ResponseEntity<String> register(String email, String password) {
         if(email.isBlank() || password.isBlank()) return new ResponseEntity<>("Email and password can't be empty!", HttpStatus.BAD_REQUEST);
         if(userRepository.existsByEmail(email)) return new ResponseEntity<>("User with email: " + email + " already exists!", HttpStatus.BAD_REQUEST);
@@ -56,6 +61,10 @@ public class UserService {
         return new ResponseEntity<>("Registration successful!", HttpStatus.OK);
     }
 
+    /**
+     * @param email E-mail of the user to be deleted
+     * @return Server response
+     */
     public ResponseEntity<?> delete(String email) {
         if(email.isBlank()) return new ResponseEntity<>("Details can't be empty!", HttpStatus.BAD_REQUEST);
         if(userRepository.findByEmail(email).isEmpty()) return new ResponseEntity<>("User not found in database!", HttpStatus.BAD_REQUEST);
@@ -64,6 +73,13 @@ public class UserService {
         return new ResponseEntity<>("User succesfully deleted!", HttpStatus.OK);
     }
 
+    /**
+     * @param email E-mail of the user to be logged in
+     * @param password Password of the user to be logged in
+     * @param req Request object
+     * @param res Response object
+     * @return Server response
+     */
     public ResponseEntity<?> login(String email, String password, HttpServletRequest req, HttpServletResponse res) {
         Optional<User> u = userRepository.findByEmail(email);
         SecurityContext context = SecurityContextHolder.getContext();
@@ -87,6 +103,11 @@ public class UserService {
         return new ResponseEntity<>("Successfully logged in!", HttpStatus.OK);
     }
 
+    /**
+     * @param req Request object
+     * @param res Response object
+     * @return Server response
+     */
     public ResponseEntity<?> logout(HttpServletRequest req, HttpServletResponse res) {
         SecurityContext context = SecurityContextHolder.getContext();
         HttpSession session = req.getSession(false);
@@ -100,6 +121,10 @@ public class UserService {
         return new ResponseEntity<>("Successfully logged out!", HttpStatus.OK);
     }
 
+    /**
+     * @param req Request object
+     * @return Server response, if OK contains the e-mail of the user associated with the session
+     */
     public ResponseEntity<?> getCurrentUser(HttpServletRequest req) {
         SecurityContext context = SecurityContextHolder.getContext();
 

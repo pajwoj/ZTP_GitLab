@@ -14,6 +14,7 @@ public class ZtpApplication {
 		UserService s = app.getBean(UserService.class);
 		BookService b = app.getBean(BookService.class);
 
+		//add mock data
 		s.register("EMAIL@WP.PL", "PASS");
 		b.add("9780156030434", "The Mysterious Flame Of Queen Loana", "Umberto Eco");
 		b.add("1", "The Mysterious Flame Of Queen Loana", "Umberto Eco");
